@@ -201,7 +201,7 @@ def _create_sankey_chart(analysis_results: dict) -> go.Figure:
             source=sources,
             target=targets,
             value=values,
-            color=px.colors.qualitative.Set3[:len(values)]
+            color=[px.colors.qualitative.Set3[i % len(px.colors.qualitative.Set3)] for i in range(len(values))]
         )
     )])
 

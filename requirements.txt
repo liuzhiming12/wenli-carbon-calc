@@ -20,4 +20,4 @@ scikit-learn==1.4.0
 
 # Development
 tqdm==4.66.1
-ipython==8.18.2
+ipython
