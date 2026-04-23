@@ -10,6 +10,7 @@ from data_loader import load_campus_energy_data
 from carbon_calculator import calculate_carbon_emissions
 from analyzer import analyze_carbon_emissions
 from visualizer import visualize_carbon_emissions
+from utils.ai_advisor import generate_emission_reduction_suggestions
 
 # Set page configuration
 st.set_page_config(
@@ -162,6 +163,15 @@ if uploaded_file is not None:
         if charts.get("sankey_chart"):
             st.markdown("### 碳流动桑基图")
             st.plotly_chart(charts["sankey_chart"], use_container_width=True)
+        
+        # AI emission reduction suggestions
+        st.subheader("🤖 AI 减排建议")
+        try:
+            st.info("正在生成减排建议...")
+            suggestions = generate_emission_reduction_suggestions(analysis_results)
+            st.markdown(suggestions)
+        except Exception as e:
+            st.warning(f"生成减排建议时出现错误: {str(e)}")
         
         # Clean up temporary file
         os.remove("temp_data.xlsx")
