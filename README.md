@@ -91,23 +91,11 @@ The sample data file `campus_energy_data.xlsx`will be created in the current dir
 
 ## 📸 Application Preview
 
-Data Upload & Cleaning
-
-Multi-dimensional Carbon Analysis
-
-AI Smart Recommendations
-
-docs/images/upload\_interface.png
-
-docs/images/analysis\_dashboard.png
-
-docs/images/ai\_suggestions.png
-
-*Intelligent Excel data processing*
-
-*Time/Department/Energy type drill-down*
-
-*Personalized reduction strategies*
+| Feature | Screenshot | Description |
+|---------|------------|-------------|
+| **Data Upload & Cleaning** | docs/images/upload_interface.png | Intelligent Excel data processing |
+| **Multi-dimensional Carbon Analysis** | docs/images/analysis_dashboard.png | Time/Department/Energy type drill-down |
+| **AI Smart Recommendations** | docs/images/ai_suggestions.png | Personalized reduction strategies |
 
 ## 🏗️ Technical Architecture
 
