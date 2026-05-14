@@ -444,10 +444,11 @@ This project is licensed under the MIT License - see the [LICENSE](https://yuanb
 
 ## 📞 Contact & Support
 
-- **Project Maintainer**: \[Your Name]
-- **Email**: \[your.email\@example.com]
+- **Project Maintainer**: Liu Zhiming
+- **Email**: liuzhiming_2005@qq.com
+- **GitHub**: github.com/liuzhiming12
 - **Academic Advisor**: Aligned with Professor Qi Ye's research direction
-- **Institution**: Wuhan Wenli College
+- **Institution**: Wuhan College of Arts and Sciences
 
 ## 🙏 Acknowledgments
 
