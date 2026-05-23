@@ -31,14 +31,14 @@ def clean_campus_billing_data(file_path):
         'Info. Sci.': 'School of Information Science',
         'Information Science': 'School of Information Science',
         '信息学院': 'School of Information Science',
-        '计算机学院': 'School of Computer Science',
+        '计算机学�?: 'School of Computer Science',
         'CS': 'School of Computer Science',
-        '商学院': 'School of Business',
+        '商学�?: 'School of Business',
         'Business': 'School of Business',
         '经管学院': 'School of Economics and Management',
-        '图书馆': 'Library',
+        '图书�?: 'Library',
         'Lib': 'Library',
-        '行政楼': 'Administration Building',
+        '行政�?: 'Administration Building',
         'Admin': 'Administration Building',
     }
     
@@ -51,8 +51,8 @@ def clean_campus_billing_data(file_path):
         if col in df.columns:
             df[col] = df[col].fillna(df[col].median())
     
-    # Step 4: Calculate carbon using Hubei Grid OM factor
-    OM_FACTOR = 0.562  # kgCO2/kWh, Hubei 2022 provincial bulletin
+    # Step 4: Calculate carbon using Hubei provincial grid factor
+    OM_FACTOR = 0.4364  # kgCO2/kWh, Hubei provincial grid, MEE 2022 bulletin
     
     df['electricity_co2_kg'] = df['electricity_kwh'] * OM_FACTOR
     
@@ -66,7 +66,7 @@ def main():
     # For demonstration, create sample messy data
     sample_data = {
         'date': ['2024-01-15', '2024/02/20', '15/03/2024', '2024-04-10'],
-        'department': ['信息学院', 'Info. Sci.', 'CS', '商学院'],
+        'department': ['信息学院', 'Info. Sci.', 'CS', '商学�?],
         'electricity_kwh': [12000, 8500, np.nan, 9200],
         'gas_m3': [450, np.nan, 380, 520],
         'water_tons': [120, 95, 110, np.nan]
@@ -85,7 +85,7 @@ def main():
         '信息学院': 'School of Information Science',
         'Info. Sci.': 'School of Information Science',
         'CS': 'School of Computer Science',
-        '商学院': 'School of Business',
+        '商学�?: 'School of Business',
     }
     cleaned_df['department'] = cleaned_df['department'].replace(department_mapping)
     
@@ -93,12 +93,12 @@ def main():
     cleaned_df['gas_m3'] = cleaned_df['gas_m3'].fillna(cleaned_df['gas_m3'].median())
     cleaned_df['water_tons'] = cleaned_df['water_tons'].fillna(cleaned_df['water_tons'].median())
     
-    OM_FACTOR = 0.562
+    OM_FACTOR = 0.4364
     cleaned_df['electricity_co2_kg'] = cleaned_df['electricity_kwh'] * OM_FACTOR
     
     print("Cleaned and standardized data:")
     print(cleaned_df)
-    print(f"\n✓ Hubei Grid OM factor applied: {OM_FACTOR} kgCO2/kWh")
+    print(f"\n✓ Hubei provincial grid factor applied: {OM_FACTOR} kgCO2/kWh (MEE 2022 bulletin)")
 
 if __name__ == "__main__":
     main()

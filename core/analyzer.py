@@ -44,10 +44,10 @@ def analyze_carbon_emissions(
         results["time_trend"] = time_trend
 
         if time_trend is not None and not time_trend.empty:
-            max_emission_period = time_trend.loc[time_trend['总碳排放(吨)'].idxmax()]
+            max_emission_period = time_trend.loc[time_trend['总碳排放(�?'].idxmax()]
             results["key_metrics"]["highest_emission_period"] = {
                 "period": str(max_emission_period.name),
-                "emission": float(max_emission_period['总碳排放(吨)'])
+                "emission": float(max_emission_period['总碳排放(�?'])
             }
 
     if analysis_type in ["all", "department"]:
@@ -62,10 +62,10 @@ def analyze_carbon_emissions(
             results["department_comparison"] = dept_analysis
 
             if dept_analysis is not None and not dept_analysis.empty:
-                max_emission_dept = dept_analysis.loc[dept_analysis['总碳排放(吨)'].idxmax()]
+                max_emission_dept = dept_analysis.loc[dept_analysis['总碳排放(�?'].idxmax()]
                 results["key_metrics"]["highest_emission_department"] = {
                     "department": max_emission_dept.name,
-                    "emission": float(max_emission_dept['总碳排放(吨)']),
+                    "emission": float(max_emission_dept['总碳排放(�?']),
                     "percentage": float(max_emission_dept['占比(%)'])
                 }
         else:
@@ -95,7 +95,7 @@ def calculate_intensity_metrics(
     dict
         Intensity metrics including per-capita and per-area emissions
     """
-    total_emission = df['总碳排放(吨)'].sum()
+    total_emission = df['总碳排放(�?'].sum()
 
     intensity_results = {
         "total_emission": float(total_emission),
@@ -153,7 +153,7 @@ def predict_future_emissions(
     df_copy['日期'] = pd.to_datetime(df_copy['日期'])
     df_copy = df_copy.sort_values('日期')
 
-    monthly_emissions = df_copy.set_index('日期').resample('M')['总碳排放(吨)'].sum()
+    monthly_emissions = df_copy.set_index('日期').resample('M')['总碳排放(�?'].sum()
 
     if len(monthly_emissions) < 3:
         return {"error": "Need at least 3 months of data for prediction"}
@@ -174,7 +174,7 @@ def predict_future_emissions(
 
     predicted_df = pd.DataFrame({
         '日期': future_dates,
-        '预测碳排放(吨)': future_predictions
+        '预测碳排�?�?': future_predictions
     })
     predicted_df.set_index('日期', inplace=True)
 
@@ -321,44 +321,44 @@ def _analyze_time_trend(df: pd.DataFrame, granularity: str) -> pd.DataFrame:
 
     trend_df = resampled.agg({
         '电力(kWh)': 'sum',
-        '水(吨)': 'sum',
+        '�?�?': 'sum',
         '燃气(m3)': 'sum',
-        '电力碳排放(吨)': 'sum',
-        '水碳排放(吨)': 'sum',
-        '燃气碳排放(吨)': 'sum',
-        '总碳排放(吨)': 'sum'
+        '电力碳排�?�?': 'sum',
+        '水碳排放(�?': 'sum',
+        '燃气碳排�?�?': 'sum',
+        '总碳排放(�?': 'sum'
     })
 
-    trend_df['环比变化(%)'] = trend_df['总碳排放(吨)'].pct_change() * 100
+    trend_df['环比变化(%)'] = trend_df['总碳排放(�?'].pct_change() * 100
 
     if len(trend_df) > 12:
-        trend_df['同比变化(%)'] = trend_df['总碳排放(吨)'].pct_change(periods=12) * 100
+        trend_df['同比变化(%)'] = trend_df['总碳排放(�?'].pct_change(periods=12) * 100
 
     return trend_df
 
 def _analyze_departments(df: pd.DataFrame, department_col: str) -> pd.DataFrame:
     dept_df = df.groupby(department_col).agg({
         '电力(kWh)': 'sum',
-        '水(吨)': 'sum',
+        '�?�?': 'sum',
         '燃气(m3)': 'sum',
-        '电力碳排放(吨)': 'sum',
-        '水碳排放(吨)': 'sum',
-        '燃气碳排放(吨)': 'sum',
-        '总碳排放(吨)': 'sum'
+        '电力碳排�?�?': 'sum',
+        '水碳排放(�?': 'sum',
+        '燃气碳排�?�?': 'sum',
+        '总碳排放(�?': 'sum'
     })
 
-    total_emission = dept_df['总碳排放(吨)'].sum()
-    dept_df['占比(%)'] = (dept_df['总碳排放(吨)'] / total_emission) * 100
+    total_emission = dept_df['总碳排放(�?'].sum()
+    dept_df['占比(%)'] = (dept_df['总碳排放(�?'] / total_emission) * 100
 
-    dept_df = dept_df.sort_values('总碳排放(吨)', ascending=False)
+    dept_df = dept_df.sort_values('总碳排放(�?', ascending=False)
 
     return dept_df
 
 def _analyze_energy_types(df: pd.DataFrame) -> dict:
-    total_electricity = df['电力碳排放(吨)'].sum()
-    total_water = df['水碳排放(吨)'].sum()
-    total_gas = df['燃气碳排放(吨)'].sum()
-    total_emission = df['总碳排放(吨)'].sum()
+    total_electricity = df['电力碳排�?�?'].sum()
+    total_water = df['水碳排放(�?'].sum()
+    total_gas = df['燃气碳排�?�?'].sum()
+    total_emission = df['总碳排放(�?'].sum()
 
     if total_emission > 0:
         electricity_percent = (total_electricity / total_emission) * 100
@@ -370,24 +370,24 @@ def _analyze_energy_types(df: pd.DataFrame) -> dict:
         gas_percent = 0
 
     total_electricity_kwh = df['电力(kWh)'].sum()
-    total_water_ton = df['水(吨)'].sum()
+    total_water_ton = df['�?�?'].sum()
     total_gas_m3 = df['燃气(m3)'].sum()
 
     return {
         "emissions": {
             "电力": float(total_electricity),
-            "水": float(total_water),
+            "�?: float(total_water),
             "燃气": float(total_gas),
-            "总": float(total_emission)
+            "�?: float(total_emission)
         },
         "percentages": {
             "电力": float(electricity_percent),
-            "水": float(water_percent),
+            "�?: float(water_percent),
             "燃气": float(gas_percent)
         },
         "consumption": {
             "电力(kWh)": float(total_electricity_kwh),
-            "水(吨)": float(total_water_ton),
+            "�?�?": float(total_water_ton),
             "燃气(m3)": float(total_gas_m3)
         }
     }

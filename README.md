@@ -14,9 +14,10 @@ water, gas) for campus-wide carbon reporting.
 - Uploads Excel/CSV utility billing data
 - Standardizes messy formats:
   - Auto-detects date columns (handles `2023/1/1`, `2023-01-01`, `Jan 1 2023`)
-  - Standardizes department names (e.g., maps `Info. Sci.` → `Information Science`)
+  - Standardizes department names (e.g., maps `Info. Sci.` �?`Information Science`)
   - Fills missing gas readings with monthly median imputation
-- Calculates Scope 1/2/3 emissions using **Hubei Grid OM factor 0.562 kgCO₂/kWh**
+- Calculates Scope 1/2/3 emissions using **Hubei provincial grid factor 0.4364 kgCO₂/kWh** 
+  (MEE 2022 bulletin)
 - Generates department-level breakdowns and time-series trend visualizations
 - Exports formatted reports for ESG disclosure
 
@@ -48,7 +49,7 @@ different departments. Problems I handled:
 
 ## Limitations
 
-- Static carbon factor (0.562); no dynamic grid mix adjustment
+- Static carbon factor (0.4364); no dynamic grid mix adjustment
 - No real-time IoT integration; relies on manual Excel uploads
 - Scenario forecasting uses simple regression; not validated against external 
   benchmarks

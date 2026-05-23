@@ -9,7 +9,7 @@ QIANWEN_API_KEY = os.getenv('QIANWEN_API_KEY', '')
 
 # Carbon intensity factors (kg CO2 per unit)
 CARBON_INTENSITY = {
-    'electricity': 0.562,   # Hubei grid OM factor (Operating Margin)
+    'electricity': 0.4364,   # Hubei provincial grid factor (MEE 2022 bulletin)
     'water': 0.28,          # Water carbon intensity
     'gas': 2.17             # Natural gas carbon intensity
 }
@@ -32,10 +32,10 @@ SEASONAL_FACTORS = {
 
 # Department base consumption
 DEPARTMENT_BASE_CONSUMPTION = {
-    '行政楼': {'electricity': 500, 'water': 20, 'gas': 30},
-    '教学楼': {'electricity': 1200, 'water': 50, 'gas': 20},
-    '宿舍区': {'electricity': 1000, 'water': 80, 'gas': 40},
-    '图书馆': {'electricity': 800, 'water': 30, 'gas': 15},
+    '行政�?: {'electricity': 500, 'water': 20, 'gas': 30},
+    '教学�?: {'electricity': 1200, 'water': 50, 'gas': 20},
+    '宿舍�?: {'electricity': 1000, 'water': 80, 'gas': 40},
+    '图书�?: {'electricity': 800, 'water': 30, 'gas': 15},
     '食堂': {'electricity': 1500, 'water': 100, 'gas': 200}
 }
 
@@ -49,7 +49,7 @@ APP_SETTINGS = {
 
 # Data validation settings
 DATA_VALIDATION = {
-    'required_columns': ['日期', '电力(kWh)', '水(吨)', '燃气(m3)'],
+    'required_columns': ['日期', '电力(kWh)', '�?�?', '燃气(m3)'],
     'date_format': '%Y-%m-%d',
     'min_rows': 1,
     'max_rows': 10000
