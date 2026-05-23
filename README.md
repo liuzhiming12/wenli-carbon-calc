@@ -34,22 +34,22 @@ Python 3.12, Pandas, Streamlit, Plotly, XlsxWriter
 | **Output**| Developer dashboard| Management report|
 | **Use case**| Identify inefficient code| Campus carbon budgeting|
 
-## Data Journey (My Real Process)
+## Data Journey
 
-The source data was 500+ rows of messy campus billing Excel files exported from 
-different departments. Problems I handled:
+The source data was **500+ rows of synthetic campus billing data** I generated 
+to simulate realistic institutional energy datasets. Intentionally introduced 
+messiness to test the cleaning pipeline:
 
-1. **Date chaos**: Three date formats in the same column. Used 
-   `pd.to_datetime(..., infer_datetime_format=True)` and manual regex fallback.
-2. **Department name inconsistency**: Same department written as "Info. Sci.", 
-   "Information Science", "Xinxi Xueyuan". Built a manual mapping dictionary after 
-   checking with campus admin.
-3. **Missing gas bills**: Some months had blank cells. Used 
-   `df[col].fillna(df[col].median())` as a conservative stopgap.
+1. **Date chaos**: Three date formats in the same column (`2023/1/1`, `2023-01-01`, `Jan 1 2023`)
+2. **Department name inconsistency**: Same department written as "Info. Sci.", "Information Science", "Xinxi Xueyuan"
+3. **Missing gas bills**: Random blank cells to test imputation logic
+
+Used `pd.to_datetime(..., infer_datetime_format=True)` and manual mapping 
+dictionaries for cleaning; median fill for missing values.
 
 ## Limitations
 
-- Static carbon factor (0.4364); no dynamic grid mix adjustment
+- Static carbon factor (0.4364); synthetic data used for validation; no real-world campus deployment yet
 - No real-time IoT integration; relies on manual Excel uploads
 - Scenario forecasting uses simple regression; not validated against external 
   benchmarks
