@@ -14,9 +14,9 @@ water, gas) for campus-wide carbon reporting.
 - Uploads Excel/CSV utility billing data
 - Standardizes messy formats:
   - Auto-detects date columns (handles `2023/1/1`, `2023-01-01`, `Jan 1 2023`)
-  - Standardizes department names (e.g., maps `Info. Sci.` �?`Information Science`)
+  - Standardizes department names (e.g., maps `Info. Sci.` to `Information Science`)
   - Fills missing gas readings with monthly median imputation
-- Calculates Scope 1/2/3 emissions using **Hubei provincial grid factor 0.4364 kgCO₂/kWh** 
+- Calculates Scope 1/2/3 emissions using **Hubei provincial grid factor 0.4364 kgCO2/kWh** 
   (MEE 2022 bulletin)
 - Generates department-level breakdowns and time-series trend visualizations
 - Exports formatted reports for ESG disclosure
@@ -42,7 +42,7 @@ different departments. Problems I handled:
 1. **Date chaos**: Three date formats in the same column. Used 
    `pd.to_datetime(..., infer_datetime_format=True)` and manual regex fallback.
 2. **Department name inconsistency**: Same department written as "Info. Sci.", 
-   "Information Science", "信息学院". Built a manual mapping dictionary after 
+   "Information Science", "Xinxi Xueyuan". Built a manual mapping dictionary after 
    checking with campus admin.
 3. **Missing gas bills**: Some months had blank cells. Used 
    `df[col].fillna(df[col].median())` as a conservative stopgap.
