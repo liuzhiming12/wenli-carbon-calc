@@ -9,7 +9,7 @@ QIANWEN_API_KEY = os.getenv('QIANWEN_API_KEY', '')
 
 # Carbon intensity factors (kg CO2 per unit)
 CARBON_INTENSITY = {
-    'electricity': 0.5839,  # Hubei grid carbon intensity
+    'electricity': 0.562,   # Hubei grid OM factor (Operating Margin)
     'water': 0.28,          # Water carbon intensity
     'gas': 2.17             # Natural gas carbon intensity
 }
