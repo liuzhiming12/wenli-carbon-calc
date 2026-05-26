@@ -47,6 +47,14 @@ messiness to test the cleaning pipeline:
 Used `pd.to_datetime(..., infer_datetime_format=True)` and manual mapping 
 dictionaries for cleaning; median fill for missing values.
 
+## Recent Updates
+
+- **May 2026**: Enhanced data cleaning pipeline with robust date format handling
+- **May 2026**: Added department name standardization with alias mapping
+- **May 2026**: Improved missing value imputation using median fill strategy
+- **May 2026**: Added ESG-ready Excel report export via XlsxWriter
+- **Apr 2026**: Built synthetic data generator for testing edge cases
+
 ## Limitations
 
 - Static carbon factor (0.4364); synthetic data used for validation; no real-world campus deployment yet
