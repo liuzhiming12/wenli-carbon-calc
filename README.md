@@ -16,7 +16,7 @@ water, gas) for campus-wide carbon reporting.
   - Auto-detects date columns (handles `2023/1/1`, `2023-01-01`, `Jan 1 2023`)
   - Standardizes department names (e.g., maps `Info. Sci.` to `Information Science`)
   - Fills missing gas readings with monthly median imputation
-- Calculates Scope 1/2/3 emissions using **Hubei provincial grid factor 0.4364 kgCO2/kWh** 
+- Calculates Scope 1/2/3 emissions using **Hubei provincial emission factor 0.4364 kgCO₂/kWh** 
   (MEE 2022 bulletin)
 - Generates department-level breakdowns and time-series trend visualizations
 - Exports formatted reports for ESG disclosure
@@ -58,3 +58,7 @@ dictionaries for cleaning; median fill for missing values.
 ## License
 
 MIT
+
+## Related Project
+
+- **`https://github.com/liuzhiming12/jiangcheng-carbon-eye`** — Real-time code-level carbon monitoring. Same engine, real-time input.

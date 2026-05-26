@@ -2,9 +2,9 @@ import pandas as pd
 
 def calculate_carbon_emissions(
     df: pd.DataFrame,
-    electricity_factor: float = 0.4364,   # kg CO�?kWh, Hubei Grid OM factor 2022
-    water_factor: float = 0.28,         # kg CO�?�?
-    gas_factor: float = 2.17            # kg CO�?m³
+    electricity_factor: float = 0.4364,   # kg CO2/kWh, Hubei Grid OM factor 2022
+    water_factor: float = 0.28,         # kg CO2/吨
+    gas_factor: float = 2.17            # kg CO2/m³
 ) -> pd.DataFrame:
     """
     Calculate carbon emissions from energy consumption data.
@@ -12,13 +12,13 @@ def calculate_carbon_emissions(
     Parameters
     ----------
     df : pd.DataFrame
-        Cleaned energy data with columns: 电力(kWh), �?�?, 燃气(m3)
+        Cleaned energy data with columns: 电力(kWh), 用水量, 燃气(m3)
     electricity_factor : float, default 0.4364
-        Carbon intensity for electricity in kg CO�?kWh (Hubei provincial grid factor (MEE 2022 bulletin)
+        Carbon intensity for electricity in kg CO2/kWh (Hubei provincial grid factor (MEE 2022 bulletin)
     water_factor : float, default 0.28
-        Carbon intensity for water in kg CO�?ton
+        Carbon intensity for water in kg CO2/ton
     gas_factor : float, default 2.17
-        Carbon intensity for natural gas in kg CO�?m³
+        Carbon intensity for natural gas in kg CO2/m³
     
     Returns
     -------
@@ -31,7 +31,7 @@ def calculate_carbon_emissions(
         return df
     
     # Check required columns
-    required_columns = ['电力(kWh)', '�?�?', '燃气(m3)']
+    required_columns = ['电力(kWh)', '用水量', '燃气(m3)']
     missing_columns = [col for col in required_columns if col not in df.columns]
     if missing_columns:
         raise ValueError(f"Missing required columns: {missing_columns}")
@@ -45,15 +45,15 @@ def calculate_carbon_emissions(
     
     # Calculate carbon emissions
     # Convert kg to tons (1 ton = 1000 kg)
-    result_df['电力碳排�?�?'] = result_df['电力(kWh)'] * electricity_factor / 1000
-    result_df['水碳排放(�?'] = result_df['�?�?'] * water_factor / 1000
-    result_df['燃气碳排�?�?'] = result_df['燃气(m3)'] * gas_factor / 1000
+    result_df['电力碳排放(吨)'] = result_df['电力(kWh)'] * electricity_factor / 1000
+    result_df['水碳排放(吨)'] = result_df['用水量'] * water_factor / 1000
+    result_df['燃气碳排放(吨)'] = result_df['燃气(m3)'] * gas_factor / 1000
     
     # Calculate total carbon emissions
-    result_df['总碳排放(�?'] = (
-        result_df['电力碳排�?�?'] + 
-        result_df['水碳排放(�?'] + 
-        result_df['燃气碳排�?�?']
+    result_df['总碳排放(吨)'] = (
+        result_df['电力碳排放(吨)'] + 
+        result_df['水碳排放(吨)'] + 
+        result_df['燃气碳排放(吨)']
     )
     
     return result_df
