@@ -24,6 +24,39 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# 添加专业配色方案
+st.markdown("""
+<style>
+:root {
+    --primary-color: #22c55e;
+    --secondary-color: #16a34a;
+    --bg-dark: #0f172a;
+    --bg-card: #1e293b;
+}
+
+.stMetric {
+    background: var(--bg-card);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+.stButton>button {
+    background: var(--primary-color);
+    color: white;
+    border-radius: 0.5rem;
+}
+
+h1, h2, h3 {
+    color: #f1f5f9;
+}
+
+.stDataFrame {
+    background: var(--bg-card);
+}
+</style>
+""", unsafe_allow_html=True)
+
 st.sidebar.title("🌍 文理碳计")
 st.sidebar.markdown("武汉文理学院校园碳足迹计算器")
 st.sidebar.divider()
@@ -74,7 +107,7 @@ if uploaded_file is not None:
         st.success("分析完成！")
 
         st.subheader("📊 数据预览")
-        st.dataframe(df_with_carbon.head(), width='stretch')
+        st.dataframe(df_with_carbon.head(), use_container_width=True)
 
         st.subheader("📈 关键指标")
         if analysis_results.get("key_metrics"):
@@ -108,25 +141,56 @@ if uploaded_file is not None:
                     f"{energy_data['consumption']['燃气(m3)']:.0f} m3"
                 ]
             })
-            st.dataframe(energy_df, width='stretch')
+            st.dataframe(energy_df, use_container_width=True)
+
+        # 添加Scope 1/2/3分类可视化
+        st.subheader("📊 GHG Protocol Scope分类")
+        st.markdown("""
+        **Scope分类说明**：
+        - **Scope 1（直接排放）**：校园内直接燃烧产生的排放（如燃气锅炉）
+        - **Scope 2（间接排放）**：外购电力产生的排放
+        - **Scope 3（其他间接排放）**：供应链间接排放（如自来水处理）
+        """)
+        
+        scope_data = {
+            'Scope': ['Scope 1 - 直接排放', 'Scope 2 - 间接排放', 'Scope 3 - 其他间接排放'],
+            '排放量(吨)': [
+                energy_data['emissions']['燃气'],  # 燃气属于Scope 1
+                energy_data['emissions']['电力'],   # 电力属于Scope 2
+                energy_data['emissions']['水']      # 自来水属于Scope 3
+            ]
+        }
+        scope_df = pd.DataFrame(scope_data)
+        
+        import plotly.express as px
+        fig_scope = px.pie(
+            scope_df,
+            values='排放量(吨)',
+            names='Scope',
+            title='GHG Protocol Scope分类占比',
+            hole=0.3,
+            color_discrete_sequence=['#ef4444', '#f97316', '#22c55e']
+        )
+        fig_scope.update_traces(textposition='inside', textinfo='percent+label')
+        st.plotly_chart(fig_scope, use_container_width=True)
 
         st.subheader("📈 数据可视化")
 
         if charts.get("trend_chart"):
             st.markdown("### 碳排放时间趋势")
-            st.plotly_chart(charts["trend_chart"], width='stretch')
+            st.plotly_chart(charts["trend_chart"], use_container_width=True)
 
         if charts.get("department_chart"):
             st.markdown("### 部门碳排放占比")
-            st.plotly_chart(charts["department_chart"], width='stretch')
+            st.plotly_chart(charts["department_chart"], use_container_width=True)
 
         if charts.get("energy_chart"):
             st.markdown("### 能源类型分析")
-            st.plotly_chart(charts["energy_chart"], width='stretch')
+            st.plotly_chart(charts["energy_chart"], use_container_width=True)
 
         if charts.get("sankey_chart"):
             st.markdown("### 碳流动桑基图")
-            st.plotly_chart(charts["sankey_chart"], width='stretch')
+            st.plotly_chart(charts["sankey_chart"], use_container_width=True)
 
         st.markdown("---")
         st.subheader("📐 投入-产出分析")
@@ -355,7 +419,7 @@ else:
     })
 
     st.markdown("#### 数据格式示例：")
-    st.dataframe(sample_data, width='stretch')
+    st.dataframe(sample_data, use_container_width=True)
 
     st.markdown("\n### 🎯 功能特点")
     features = [
