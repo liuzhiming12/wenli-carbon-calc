@@ -35,9 +35,8 @@ def analyze_carbon_emissions(
         print("Warning: Empty dataframe returned")
         return results
 
-    if analysis_type in ["all", "energy"]:
-        energy_analysis = _analyze_energy_types(df)
-        results["energy_type_analysis"] = energy_analysis
+    energy_analysis = _analyze_energy_types(df)
+    results["energy_type_analysis"] = energy_analysis
 
     if analysis_type in ["all", "time"] and "日期" in df.columns:
         time_trend = _analyze_time_trend(df, time_granularity)

@@ -30,29 +30,20 @@ st.markdown("""
 :root {
     --primary-color: #22c55e;
     --secondary-color: #16a34a;
-    --bg-dark: #0f172a;
-    --bg-card: #1e293b;
 }
 
 .stMetric {
-    background: var(--bg-card);
+    background: #f8fafc;
     padding: 1rem;
     border-radius: 0.5rem;
     border-left: 4px solid var(--primary-color);
+    border: 1px solid #e2e8f0;
 }
 
 .stButton>button {
     background: var(--primary-color);
     color: white;
     border-radius: 0.5rem;
-}
-
-h1, h2, h3 {
-    color: #f1f5f9;
-}
-
-.stDataFrame {
-    background: var(--bg-card);
 }
 </style>
 """, unsafe_allow_html=True)
@@ -67,11 +58,6 @@ uploaded_file = st.sidebar.file_uploader(
 )
 
 st.sidebar.subheader("🔧 分析设置")
-analysis_type = st.sidebar.selectbox(
-    "分析类型",
-    ["全部", "时间趋势", "部门对比", "能耗类型"]
-)
-
 time_granularity = st.sidebar.selectbox(
     "时间粒度",
     ["月", "季度", "年"]
@@ -92,12 +78,11 @@ if uploaded_file is not None:
         df_with_carbon = calculate_carbon_emissions(df)
 
         st.info("正在分析数据...")
-        analysis_map = {"全部": "all", "时间趋势": "time", "部门对比": "department", "能耗类型": "energy"}
         time_map = {"月": "month", "季度": "quarter", "年": "year"}
 
         analysis_results = analyze_carbon_emissions(
             df_with_carbon,
-            analysis_type=analysis_map[analysis_type],
+            analysis_type="all",
             time_granularity=time_map[time_granularity]
         )
 
@@ -143,36 +128,36 @@ if uploaded_file is not None:
             })
             st.dataframe(energy_df, use_container_width=True)
 
-        # 添加Scope 1/2/3分类可视化
-        st.subheader("📊 GHG Protocol Scope分类")
-        st.markdown("""
-        **Scope分类说明**：
-        - **Scope 1（直接排放）**：校园内直接燃烧产生的排放（如燃气锅炉）
-        - **Scope 2（间接排放）**：外购电力产生的排放
-        - **Scope 3（其他间接排放）**：供应链间接排放（如自来水处理）
-        """)
-        
-        scope_data = {
-            'Scope': ['Scope 1 - 直接排放', 'Scope 2 - 间接排放', 'Scope 3 - 其他间接排放'],
-            '排放量(吨)': [
-                energy_data['emissions']['燃气'],  # 燃气属于Scope 1
-                energy_data['emissions']['电力'],   # 电力属于Scope 2
-                energy_data['emissions']['水']      # 自来水属于Scope 3
-            ]
-        }
-        scope_df = pd.DataFrame(scope_data)
-        
-        import plotly.express as px
-        fig_scope = px.pie(
-            scope_df,
-            values='排放量(吨)',
-            names='Scope',
-            title='GHG Protocol Scope分类占比',
-            hole=0.3,
-            color_discrete_sequence=['#ef4444', '#f97316', '#22c55e']
-        )
-        fig_scope.update_traces(textposition='inside', textinfo='percent+label')
-        st.plotly_chart(fig_scope, use_container_width=True)
+            # 添加Scope 1/2/3分类可视化
+            st.subheader("📊 GHG Protocol Scope分类")
+            st.markdown("""
+            **Scope分类说明**：
+            - **Scope 1（直接排放）**：校园内直接燃烧产生的排放（如燃气锅炉）
+            - **Scope 2（间接排放）**：外购电力产生的排放
+            - **Scope 3（其他间接排放）**：供应链间接排放（如自来水处理）
+            """)
+            
+            scope_data = {
+                'Scope': ['Scope 1 - 直接排放', 'Scope 2 - 间接排放', 'Scope 3 - 其他间接排放'],
+                '排放量(吨)': [
+                    energy_data['emissions']['燃气'],  # 燃气属于Scope 1
+                    energy_data['emissions']['电力'],   # 电力属于Scope 2
+                    energy_data['emissions']['水']      # 自来水属于Scope 3
+                ]
+            }
+            scope_df = pd.DataFrame(scope_data)
+            
+            import plotly.express as px
+            fig_scope = px.pie(
+                scope_df,
+                values='排放量(吨)',
+                names='Scope',
+                title='GHG Protocol Scope分类占比',
+                hole=0.3,
+                color_discrete_sequence=['#ef4444', '#f97316', '#22c55e']
+            )
+            fig_scope.update_traces(textposition='inside', textinfo='percent+label')
+            st.plotly_chart(fig_scope, use_container_width=True)
 
         st.subheader("📈 数据可视化")
 
@@ -320,34 +305,35 @@ if uploaded_file is not None:
 
         st.markdown("引入校园绿化碳汇能力，展示距离碳中和的距离：")
 
-        sink_col1, sink_col2, sink_col3 = st.columns(3)
+        with st.expander("⚙️ 参数设置（点击展开）", expanded=False):
+            sink_col1, sink_col2, sink_col3 = st.columns(3)
 
-        with sink_col1:
-            tree_count = st.number_input(
-                "树木数量（棵）",
-                min_value=0,
-                value=1000,
-                step=50,
-                help="校园内树木总数"
-            )
+            with sink_col1:
+                tree_count = st.number_input(
+                    "树木数量（棵）",
+                    min_value=0,
+                    value=1000,
+                    step=50,
+                    help="校园内树木总数"
+                )
 
-        with sink_col2:
-            forest_area = st.number_input(
-                "森林面积（m²）",
-                min_value=0.0,
-                value=5000.0,
-                step=100.0,
-                help="校园森林/绿地面积"
-            )
+            with sink_col2:
+                forest_area = st.number_input(
+                    "森林面积（m²）",
+                    min_value=0.0,
+                    value=5000.0,
+                    step=100.0,
+                    help="校园森林/绿地面积"
+                )
 
-        with sink_col3:
-            grass_area = st.number_input(
-                "草坪面积（m²）",
-                min_value=0.0,
-                value=10000.0,
-                step=100.0,
-                help="校园草坪面积"
-            )
+            with sink_col3:
+                grass_area = st.number_input(
+                    "草坪面积（m²）",
+                    min_value=0.0,
+                    value=10000.0,
+                    step=100.0,
+                    help="校园草坪面积"
+                )
 
         if st.button("计算碳汇", type="primary"):
             sink_data = calculate_carbon_sink(
@@ -356,48 +342,54 @@ if uploaded_file is not None:
                 grass_area=grass_area if grass_area > 0 else None
             )
 
-            emission_data = {"total_emission": analysis_results["energy_type_analysis"]["emissions"]["总排放"]}
+            if analysis_results.get("energy_type_analysis"):
+                emission_data = {"total_emission": analysis_results["energy_type_analysis"]["emissions"]["总排放"]}
+                comparison = compare_emissions_with_sink(emission_data, sink_data)
 
-            comparison = compare_emissions_with_sink(emission_data, sink_data)
+                sink_col_a, sink_col_b = st.columns(2)
 
-            sink_col_a, sink_col_b = st.columns(2)
+                sink_col_a.metric(
+                    "年碳汇吸收量",
+                    f"{sink_data['total_absorption']:.2f} 吨 CO2",
+                    help="校园绿化每年可吸收的CO₂量"
+                )
 
-            sink_col_a.metric(
-                "年碳汇吸收量",
-                f"{sink_data['total_absorption']:.2f} 吨 CO2",
-                help="校园绿化每年可吸收的CO₂量"
-            )
+                sink_col_b.metric(
+                    "碳抵消比例",
+                    f"{comparison['offset_ratio']:.2f}%",
+                    delta=comparison['status_text'],
+                    help="碳汇占总排放的比例"
+                )
 
-            sink_col_b.metric(
-                "碳抵消比例",
-                f"{comparison['offset_ratio']:.2f}%",
-                delta=comparison['status_text'],
-                help="碳汇占总排放的比例"
-            )
+                st.progress(
+                    min(comparison['offset_ratio'] / 100, 1.0),
+                    text=f"抵消进度：{comparison['offset_ratio']:.2f}%"
+                )
 
-            st.progress(
-                min(comparison['offset_ratio'] / 100, 1.0),
-                text=f"抵消进度：{comparison['offset_ratio']:.2f}%"
-            )
+                net = comparison['net_emission']
+                if net > 0:
+                    st.warning(f"距离碳中和还需额外吸收：{comparison['additional_sink_needed']:.2f} 吨 CO2")
+                else:
+                    st.success("🎉 恭喜！您的校园已达到碳中和！")
 
-            net = comparison['net_emission']
-            if net > 0:
-                st.warning(f"距离碳中和还需额外吸收：{comparison['additional_sink_needed']:.2f} 吨 CO2")
+                st.markdown("""
+                **价值说明**：引入"碳中和"闭环思维，直观展示校园距离真正碳中和的距离，这是齐教授研究中非常关注的核心理念。
+                """)
             else:
-                st.success("🎉 恭喜！您的校园已达到碳中和！")
-
-            st.markdown("""
-            **价值说明**：引入"碳中和"闭环思维，直观展示校园距离真正碳中和的距离，这是齐教授研究中非常关注的核心理念。
-            """)
+                st.warning("无法获取碳排放数据，请先进行能耗分析")
 
         st.markdown("---")
         st.subheader("🤖 AI 减排建议")
-        try:
-            with st.spinner("正在生成减排建议..."):
-                suggestions = generate_emission_reduction_suggestions(analysis_results)
-            st.markdown(suggestions)
-        except Exception as e:
-            st.warning(f"生成减排建议时出现错误：{str(e)}")
+        
+        if st.button("🔄 生成AI减排建议", type="primary"):
+            try:
+                with st.spinner("正在生成减排建议..."):
+                    suggestions = generate_emission_reduction_suggestions(analysis_results)
+                st.markdown(suggestions)
+            except Exception as e:
+                st.warning(f"生成减排建议时出现错误：{str(e)}")
+        else:
+            st.info("点击上方按钮生成AI减排建议报告")
 
         os.remove("temp_data.xlsx")
 
