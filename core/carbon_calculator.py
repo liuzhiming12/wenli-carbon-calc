@@ -2,7 +2,7 @@ import pandas as pd
 
 def calculate_carbon_emissions(
     df: pd.DataFrame,
-    electricity_factor: float = 0.4364,   # kg CO2/kWh, Hubei Grid OM factor 2022
+    electricity_factor: float = 0.4044,   # kg CO2/kWh, Hubei Grid OM factor 2022
     water_factor: float = 0.28,         # kg CO2/吨
     gas_factor: float = 2.17            # kg CO2/m³
 ) -> pd.DataFrame:
@@ -13,7 +13,7 @@ def calculate_carbon_emissions(
     ----------
     df : pd.DataFrame
         Cleaned energy data with columns: 电力(kWh), 用水量, 燃气(m3)
-    electricity_factor : float, default 0.4364
+    electricity_factor : float, default 0.4044
         Carbon intensity for electricity in kg CO2/kWh (Hubei provincial grid factor (MEE 2025 bulletin (2023 regional grid carbon intensity))
     water_factor : float, default 0.28
         Carbon intensity for water in kg CO2/ton
