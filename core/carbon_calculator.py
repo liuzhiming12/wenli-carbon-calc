@@ -14,7 +14,7 @@ def calculate_carbon_emissions(
     df : pd.DataFrame
         Cleaned energy data with columns: 电力(kWh), 用水量, 燃气(m3)
     electricity_factor : float, default 0.4364
-        Carbon intensity for electricity in kg CO2/kWh (Hubei provincial grid factor (MEE 2022 bulletin)
+        Carbon intensity for electricity in kg CO2/kWh (Hubei provincial grid factor (MEE 2025 bulletin (2023 regional grid carbon intensity))
     water_factor : float, default 0.28
         Carbon intensity for water in kg CO2/ton
     gas_factor : float, default 2.17

@@ -17,7 +17,7 @@ water, gas) for campus-wide carbon reporting.
   - Standardizes department names (e.g., maps `Info. Sci.` to `Information Science`)
   - Fills missing gas readings with monthly median imputation
 - Calculates Scope 1/2/3 emissions using **Hubei provincial emission factor 0.4364 kgCO₂/kWh** 
-  (MEE 2022 bulletin)
+  (MEE 2025 bulletin, 2023 regional grid carbon intensity)
 - Generates department-level breakdowns and time-series trend visualizations
 - Exports formatted reports for ESG disclosure
 
