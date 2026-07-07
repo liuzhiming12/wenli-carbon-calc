@@ -16,7 +16,7 @@ water, gas) for campus-wide carbon reporting.
   - Auto-detects date columns (handles `2023/1/1`, `2023-01-01`, `Jan 1 2023`)
   - Standardizes department names (e.g., maps `Info. Sci.` to `Information Science`)
   - Fills missing gas readings with monthly median imputation
-- Calculates Scope 1/2/3 emissions using **Hubei provincial emission factor 0.4044 kgCO₂/kWh** 
+- Calculates Scope 1/2/3 emissions using **Hubei provincial emission factor 0.4364 kgCO₂/kWh** 
   (MEE 2022 bulletin)
 - Generates department-level breakdowns and time-series trend visualizations
 - Exports formatted reports for ESG disclosure
@@ -57,7 +57,7 @@ dictionaries for cleaning; median fill for missing values.
 
 ## Limitations
 
-- Static carbon factor (0.4044); synthetic data used for validation; no real-world campus deployment yet
+- Static carbon factor (0.4364); synthetic data used for validation; no real-world campus deployment yet
 - No real-time IoT integration; relies on manual Excel uploads
 - Scenario forecasting uses simple regression; not validated against external 
   benchmarks

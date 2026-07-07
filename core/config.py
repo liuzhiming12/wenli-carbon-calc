@@ -6,7 +6,7 @@ load_dotenv()
 QIANWEN_API_KEY = os.getenv('QIANWEN_API_KEY', '')
 
 CARBON_INTENSITY = {
-    'electricity': 0.4044,
+    'electricity': 0.4364,
     'water': 0.28,
     'gas': 2.17
 }
