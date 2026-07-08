@@ -4,25 +4,16 @@ import pandas as pd
 
 def visualize_carbon_emissions(
     analysis_results: dict,
-    chart_type: str = "all",  # "trend", "department", "energy", "sankey", "all"
-    output_format: str = "interactive"  # "interactive", "static"
+    chart_type: str = "all",
 ) -> dict:
-    """
-    Visualize carbon emissions data.
+    """Visualize carbon emissions data with Plotly charts.
 
-    Parameters
-    ----------
-    analysis_results : dict
-        Analysis results from analyze_carbon_emissions function
-    chart_type : str, default "all"
-        Type of chart to generate: "trend", "department", "energy", "sankey", or "all"
-    output_format : str, default "interactive"
-        Output format: "interactive" (Plotly) or "static" (Matplotlib)
+    Args:
+        analysis_results: output from analyze_carbon_emissions()
+        chart_type: one of "trend", "department", "energy", "sankey", or "all"
 
-    Returns
-    -------
-    dict
-        Dictionary of chart objects or configurations
+    Returns:
+        dict of chart_type → plotly Figure (or None if data unavailable)
     """
     charts = {
         "trend_chart": None,

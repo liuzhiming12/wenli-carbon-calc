@@ -4,7 +4,7 @@ def calculate_carbon_electricity(kwh, om_factor=0.4044):
     """Calculate CO2 from electricity consumption"""
     return kwh * om_factor
 
-def calculate_carbon_gas(m3, emission_factor=2.16):
+def calculate_carbon_gas(m3, emission_factor=2.17):
     """Calculate CO2 from natural gas consumption"""
     return m3 * emission_factor
 
@@ -18,7 +18,7 @@ def test_om_factor():
 
 def test_gas_calculation():
     """Test basic gas carbon calculation"""
-    assert calculate_carbon_gas(100) == 216.0
+    assert calculate_carbon_gas(100) == 217.0
 
 if __name__ == "__main__":
     test_electricity_calculation()

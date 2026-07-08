@@ -1,23 +1,22 @@
-# Core dependencies
+# Core
 pandas==2.2.0
 numpy==1.26.4
-matplotlib==3.8.3
+
+# Web UI
+streamlit==1.30.0
 
 # Visualization
-streamlit==1.30.0
 plotly==5.18.0
 
 # Data processing
 openpyxl==3.1.2
-xlrd==2.0.1
 
-# AI and API
+# AI / API
 requests==2.31.0
 python-dotenv==1.0.0
 
 # Machine Learning
 scikit-learn==1.4.0
 
-# Development
+# Utilities
 tqdm==4.66.1
-ipython

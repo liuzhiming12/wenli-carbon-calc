@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import os
 import sys
+import io
+import plotly.express as px
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -67,12 +69,9 @@ st.title("🌍 文理碳计 - 校园碳足迹计算器")
 st.markdown("## 武汉文理学院校园能耗与碳排放分析工具")
 
 if uploaded_file is not None:
-    with open("temp_data.xlsx", "wb") as f:
-        f.write(uploaded_file.getbuffer())
-
     try:
         st.info("正在加载和清洗数据...")
-        df = load_campus_energy_data("temp_data.xlsx")
+        df = load_campus_energy_data(uploaded_file)
 
         st.info("正在计算碳排放...")
         df_with_carbon = calculate_carbon_emissions(df)
@@ -147,7 +146,6 @@ if uploaded_file is not None:
             }
             scope_df = pd.DataFrame(scope_data)
             
-            import plotly.express as px
             fig_scope = px.pie(
                 scope_df,
                 values='排放量(吨)',
@@ -391,12 +389,8 @@ if uploaded_file is not None:
         else:
             st.info("点击上方按钮生成AI减排建议报告")
 
-        os.remove("temp_data.xlsx")
-
     except Exception as e:
         st.error(f"分析过程中出现错误：{str(e)}")
-        if os.path.exists("temp_data.xlsx"):
-            os.remove("temp_data.xlsx")
 else:
     st.markdown("\n\n")
     st.markdown("### 📁 上传数据文件开始分析")

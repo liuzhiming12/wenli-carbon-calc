@@ -1,29 +1,40 @@
+"""Campus energy data ingestion and cleaning pipeline.
+
+Handles Excel files from local paths or Streamlit UploadedFile objects.
+Auto-detects date columns, standardizes column names, and imputes
+missing values for vacation months.
+"""
+
 import pandas as pd
-from typing import Union
+from typing import Union, BinaryIO
 from pathlib import Path
 
 
-def load_campus_energy_data(file_path: str, sheet_name: Union[str, int] = 0) -> pd.DataFrame:
-    """
-    Load and clean campus energy consumption data from Excel file
+def load_campus_energy_data(
+    file: Union[str, BinaryIO],
+    sheet_name: Union[str, int] = 0,
+) -> pd.DataFrame:
+    """Load and clean campus energy consumption data from an Excel file.
 
     Args:
-    file_path: str - Path to excel file
-    sheet_name: str or int, default 0 - sheet name or index to read
+        file: path to an Excel file, or a file-like object (e.g. Streamlit UploadedFile)
+        sheet_name: sheet name or index to read
 
     Returns:
-    pd.DataFrame - Cleaned energy data with standardized columns
+        DataFrame with standardized columns: 日期, 电力(kWh), 用水量, 燃气(m3)
     """
+    # Validate file exists (only for path strings)
+    if isinstance(file, (str, Path)):
+        if not Path(file).exists():
+            raise FileNotFoundError(f"File not found: {file}")
 
-    if not Path(file_path).exists():
-        raise FileNotFoundError(f"File not found: {file_path}")
-
-    df = pd.read_excel(file_path, sheet_name=sheet_name)
+    df = pd.read_excel(file, sheet_name=sheet_name)
 
     if df.empty:
         print("Warning: Empty dataframe returned")
         return df
 
+    # ── Auto-detect date column ──
     date_col = None
     for col in df.columns:
         try:
@@ -41,6 +52,7 @@ def load_campus_energy_data(file_path: str, sheet_name: Union[str, int] = 0) -> 
     else:
         raise ValueError("No valid date column found in the data")
 
+    # ── Standardize column names ──
     column_mapping = {
         '电力': '电力(kWh)',
         '用电量': '电力(kWh)',
@@ -54,7 +66,7 @@ def load_campus_energy_data(file_path: str, sheet_name: Union[str, int] = 0) -> 
         '燃气': '燃气(m3)',
         '天然气': '燃气(m3)',
         'gas': '燃气(m3)',
-        'Gas': '燃气(m3)'
+        'Gas': '燃气(m3)',
     }
 
     for old_col, new_col in column_mapping.items():
@@ -63,6 +75,7 @@ def load_campus_energy_data(file_path: str, sheet_name: Union[str, int] = 0) -> 
                 df = df.rename(columns={col: new_col})
                 break
 
+    # ── Fill missing energy columns ──
     required_columns = ['电力(kWh)', '用水量', '燃气(m3)']
     for col in required_columns:
         if col not in df.columns:
@@ -72,6 +85,7 @@ def load_campus_energy_data(file_path: str, sheet_name: Union[str, int] = 0) -> 
     energy_cols = ['电力(kWh)', '用水量', '燃气(m3)']
     df[energy_cols] = df[energy_cols].ffill().fillna(0)
 
+    # ── Vacation-month imputation ──
     df['月份'] = df['日期'].dt.month
     summer_vacation = [7, 8]
     winter_vacation = [1, 2]
