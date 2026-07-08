@@ -1,5 +1,8 @@
-import streamlit as st
 import pandas as pd
+# pandas 3.0 compat: disable PyArrow string backend for Streamlit
+pd.options.future.infer_string = False
+
+import streamlit as st
 import os
 import sys
 import io
