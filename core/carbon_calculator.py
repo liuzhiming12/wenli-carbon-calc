@@ -1,10 +1,35 @@
 import pandas as pd
+import json
+import os
+
+def load_carbon_factors(factors_path: str = None) -> dict:
+    """
+    Load carbon emission factors from JSON configuration file.
+    
+    Parameters
+    ----------
+    factors_path : str, optional
+        Path to factors.json file. If None, defaults to factors.json in project root.
+    
+    Returns
+    -------
+    dict
+        Dictionary containing carbon factors for electricity, natural_gas, and water.
+    """
+    if factors_path is None:
+        factors_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "factors.json"
+        )
+    
+    with open(factors_path, 'r', encoding='utf-8') as f:
+        factors = json.load(f)
+    
+    return factors
 
 def calculate_carbon_emissions(
     df: pd.DataFrame,
-    electricity_factor: float = 0.4044,   # kg CO2/kWh, Hubei Grid OM factor (MEE 2025 bulletin, 2023 regional grid carbon intensity)
-    water_factor: float = 0.28,         # kg CO2/吨
-    gas_factor: float = 2.17            # kg CO2/m³
+    factors: dict = None
 ) -> pd.DataFrame:
     """
     Calculate carbon emissions from energy consumption data.
@@ -13,18 +38,22 @@ def calculate_carbon_emissions(
     ----------
     df : pd.DataFrame
         Cleaned energy data with columns: 电力(kWh), 用水量, 燃气(m3)
-    electricity_factor : float, default 0.4044
-        Carbon intensity for electricity in kg CO2/kWh (Hubei provincial grid factor (MEE 2025 bulletin (2023 regional grid carbon intensity))
-    water_factor : float, default 0.28
-        Carbon intensity for water in kg CO2/ton
-    gas_factor : float, default 2.17
-        Carbon intensity for natural gas in kg CO2/m³
+    factors : dict, optional
+        Dictionary containing carbon factors. If None, loads from factors.json.
     
     Returns
     -------
     pd.DataFrame
         Original dataframe with additional carbon emission columns
     """
+    # Load factors from JSON if not provided
+    if factors is None:
+        factors = load_carbon_factors()
+    
+    electricity_factor = factors['electricity']['factor']
+    water_factor = factors['water']['factor']
+    gas_factor = factors['natural_gas']['factor']
+    
     # Check if dataframe is empty
     if df.empty:
         print("Warning: Empty dataframe returned")

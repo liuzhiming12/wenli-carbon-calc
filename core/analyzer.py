@@ -162,7 +162,7 @@ def predict_future_emissions(
     df_copy['日期'] = pd.to_datetime(df_copy['日期'])
     df_copy = df_copy.sort_values('日期')
 
-    monthly_emissions = df_copy.set_index('日期').resample('M')['总碳排放(吨)'].sum()
+    monthly_emissions = df_copy.set_index('日期').resample('ME')['总碳排放(吨)'].sum()
 
     if len(monthly_emissions) < 3:
         return {"error": "Need at least 3 months of data for prediction"}
@@ -179,7 +179,7 @@ def predict_future_emissions(
     future_predictions = future_predictions * (1 - energy_savings_rate)
 
     last_date = monthly_emissions.index[-1]
-    future_dates = pd.date_range(start=last_date + pd.DateOffset(months=1), periods=prediction_months, freq='M')
+    future_dates = pd.date_range(start=last_date + pd.DateOffset(months=1), periods=prediction_months, freq='ME')
 
     predicted_df = pd.DataFrame({
         '日期': future_dates,

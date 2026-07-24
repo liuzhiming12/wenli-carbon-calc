@@ -29,6 +29,32 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Hide Streamlit's AI chat button and footer
+st.markdown("""
+    <style>
+        /* Hide AI chat button */
+        [data-testid="stChatInput"] {
+            display: none !important;
+        }
+        /* Hide sidebar footer */
+        .st-emotion-cache-1c7y2kd {
+            display: none !important;
+        }
+        /* Hide any floating chat buttons */
+        .st-emotion-cache-q2lkh2 {
+            display: none !important;
+        }
+        /* Hide the entire chat widget */
+        [data-testid="stChatMessage"] {
+            display: none !important;
+        }
+        /* Hide app menu */
+        .st-emotion-cache-16txtl3 {
+            display: none !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 # 添加专业配色方案
 st.markdown("""
 <style>

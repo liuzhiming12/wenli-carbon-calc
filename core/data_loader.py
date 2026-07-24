@@ -83,7 +83,7 @@ def load_campus_energy_data(
             print(f"Warning: Added missing column '{col}' with 0 values")
 
     energy_cols = ['电力(kWh)', '用水量', '燃气(m3)']
-    df[energy_cols] = df[energy_cols].ffill().fillna(0)
+    df[energy_cols] = df[energy_cols].ffill().fillna(0).astype(float)
 
     # ── Vacation-month imputation ──
     df['月份'] = df['日期'].dt.month

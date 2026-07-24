@@ -2,7 +2,76 @@
 
 校园级碳足迹计算器 — 批量处理水电燃气账单，生成 Scope 1/2/3 碳排放报告。
 
-## What It Does
+## 🏃 快速体验
+
+```bash
+# 1. 克隆项目
+git clone https://github.com/liuzhiming12/wenli-carbon-calc.git
+cd wenli-carbon-calc
+
+# 2. 安装依赖
+pip install -r requirements.txt
+
+# 3. 启动服务
+streamlit run ui/app.py
+```
+
+在浏览器中打开 `http://localhost:8501`，上传 Excel 数据即可开始分析。**3 分钟跑起来！**
+
+## 🏗️ 架构图
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        Streamlit 仪表盘                         │
+└─────────────────────────────────────────────────────────────────┘
+                              ▲
+                              │
+        ┌─────────────────────┼─────────────────────┐
+        ▼                     ▼                     ▼
+┌───────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│  visualizer   │    │   analyzer.py   │    │   ai_advisor    │
+│   .py         │    │   (多维分析)     │    │   .py           │
+│  (图表生成)   │    │  - 时间趋势      │    │  (AI 减排建议)  │
+│               │    │  - 部门对比      │    └─────────────────┘
+│               │    │  - 强度指标      │
+│               │    │  - 情景预测      │
+│               │    │  - 碳汇分析      │
+└───────────────┘    └─────────────────┘
+        ▲                     ▲
+        └─────────────────────┼─────────────────────┐
+                              ▼                     │
+                    ┌───────────────────┐           │
+                    │ carbon_calculator │           │
+                    │      .py          │◄──────────┤
+                    │   (碳排放计算)     │           │
+                    └───────────────────┘           │
+                              ▲                     │
+                              │                     │
+                    ┌───────────────────┐           │
+                    │   data_loader.py  │           │
+                    │   (数据清洗)       │           │
+                    │  - 日期格式识别    │           │
+                    │  - 列名规范化      │           │
+                    │  - 缺失值填补      │           │
+                    └───────────────────┘           │
+                              ▲                     │
+                              │                     │
+                    ┌───────────────────┐           │
+                    │   factors.json    │────────────┘
+                    │  (碳因子配置)      │
+                    │  - electricity    │
+                    │  - natural_gas    │
+                    │  - water          │
+                    └───────────────────┘
+                              ▲
+                              │
+                    ┌───────────────────┐
+                    │    Excel 上传     │
+                    │  (水电燃气账单)    │
+                    └───────────────────┘
+```
+
+## ✨ 功能特性
 
 - 上传校园能耗 Excel 数据，一键计算碳排放
 - 自动清洗脏数据：识别混合日期格式、规范部门名称、填补缺失值
@@ -13,68 +82,39 @@
 - 碳汇抵消分析（树木、林地、草坪）
 - AI 智能减排建议（通义千问 API，自动降级到模板）
 
-## Architecture
-
-```
-core/
-├── config.py             # 碳排放因子常量 + API 配置
-├── data_loader.py        # Excel 读取 → 日期检测 → 列名规范化 → 缺失值填补
-├── carbon_calculator.py  # 能耗数据 × 碳因子 → 碳排放量
-├── analyzer.py           # 时间趋势 / 部门对比 / 强度指标 / 预测 / 碳汇
-├── visualizer.py         # Plotly 图表生成
-└── ai_advisor.py         # 通义千问 API 减排建议
-
-ui/
-└── app.py                # Streamlit 仪表盘
-
-data/raw/
-└── generate_sample_data.py  # 合成数据生成器（500+ 行校园账单）
-```
-
-### Data Flow
-
-```
-Excel 上传 (水电燃气账单)
-        │
-        ▼
-  data_loader.py  ── 清洗、规范化
-        │
-        ▼
-  carbon_calculator.py  ── 碳排放计算
-        │
-        ├──► analyzer.py  ── 多维分析 + 预测 + 碳汇
-        │
-        └──► visualizer.py  ── 图表
-                   │
-                   ▼
-            Streamlit 仪表盘
-```
-
-## Tech Stack
+## 🛠️ 技术栈
 
 Python 3.12 · Pandas · Streamlit · Plotly · scikit-learn · 通义千问 API
 
-## Carbon Factors
+## 🌍 碳因子配置
 
-使用 **湖北电网 OM 碳排放因子 0.4044 kgCO₂/kWh**（MEE 2025 年发布，2023 年各区域电网数据）：
+碳因子存储在 `factors.json` 中，支持动态配置：
 
-| 能源类型 | 碳排放因子 | Scope |
-|----------|-----------|-------|
-| 电力 | 0.4044 kgCO₂/kWh | Scope 2 |
-| 自来水 | 0.28 kgCO₂/t | Scope 3 |
-| 天然气 | 2.17 kgCO₂/m³ | Scope 1 |
-
-## Quick Start
-
-```bash
-git clone https://github.com/liuzhiming12/wenli-carbon-calc.git
-cd wenli-carbon-calc
-
-pip install -r requirements.txt
-streamlit run ui/app.py
+```json
+{
+  "electricity": {
+    "factor": 0.4044,
+    "unit": "kgCO₂/kWh",
+    "source": "MEE 2025, Hubei grid OM"
+  },
+  "natural_gas": {
+    "factor": 2.17,
+    "unit": "kgCO₂/m³",
+    "source": "MEE 2025"
+  },
+  "water": {
+    "factor": 0.28,
+    "unit": "kgCO₂/t",
+    "source": "MEE 2025"
+  }
+}
 ```
 
-在浏览器中打开 `http://localhost:8501`，上传 Excel 数据即可开始分析。
+| 能源类型 | 碳排放因子 | 单位 | 数据来源 |
+|----------|-----------|------|----------|
+| 电力 | 0.4044 | kgCO₂/kWh | MEE 2025, Hubei grid OM |
+| 自来水 | 0.28 | kgCO₂/t | MEE 2025 |
+| 天然气 | 2.17 | kgCO₂/m³ | MEE 2025 |
 
 ## Data Journey
 
@@ -99,21 +139,9 @@ streamlit run ui/app.py
 - **May 2026**: 添加部门名称别名映射标准化
 - **Apr 2026**: 构建合成数据生成器用于边界测试
 
-## 🌐 红鸟碳眼 · Redbird Carbon Eye
-
-**红鸟碳眼** 是我在红鸟挑战营第三期打造的碳管理产品矩阵，包含两个互补模块：
-
-| 模块 | 定位 | 粒度 | 输入 | 场景 |
-|------|------|------|------|------|
-| **[江城碳眼 Pro](https://github.com/liuzhiming12/jiangcheng-carbon-eye)** | 实时代码级监测 | 进程级、秒级 | 代码片段/文件/文件夹 | 开发者自查 |
-| **文理碳算** ← 本项目 | 批量机构碳核算 | 建筑级、月级 | 水电燃气账单 Excel | 校园/企业 ESG 报告 |
-
-> 两个项目共享同一套碳排放因子引擎（湖北电网 OM 因子 0.4044 kgCO₂/kWh，MEE 2025），
-> 从不同维度覆盖"代码运行→机构运营"的完整碳足迹链路。
-
 ## 👤 关于作者
 
-**刘志明** · 武汉文理学院 · 红鸟挑战营第三期
+**刘志明** · 武汉文理学院
 
 - GitHub: [@liuzhiming12](https://github.com/liuzhiming12)
 - Email: liuzhiming_2005@qq.com
