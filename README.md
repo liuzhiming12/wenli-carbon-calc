@@ -80,11 +80,18 @@ streamlit run ui/app.py
 - 投入-产出强度指标（人均/单位面积碳排放）
 - 基于历史数据的线性回归排放预测
 - 碳汇抵消分析（树木、林地、草坪）
-- AI 智能减排建议（通义千问 API，自动降级到模板）
+- AI 智能减排建议（智谱AI API，自动降级到模板）
+
+> **配置方法**：复制 `.env.example` 为 `.env`，填入 ZhipuAI API Key：
+> ```bash
+> copy .env.example .env     # Windows
+> cp .env.example .env       # macOS / Linux
+> ```
+> 没有 Key 也能用，AI 自动降级为模板建议。
 
 ## 🛠️ 技术栈
 
-Python 3.12 · Pandas · Streamlit · Plotly · scikit-learn · 通义千问 API
+Python 3.12 · Pandas · Streamlit · Plotly · scikit-learn · 智谱AI API
 
 ## 🌍 碳因子配置
 

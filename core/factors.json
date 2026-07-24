@@ -1,0 +1,17 @@
+{
+  "electricity": {
+    "factor": 0.4044,
+    "unit": "kgCO₂/kWh",
+    "source": "MEE 2025, Hubei grid OM"
+  },
+  "natural_gas": {
+    "factor": 2.17,
+    "unit": "kgCO₂/m³",
+    "source": "MEE 2025"
+  },
+  "water": {
+    "factor": 0.28,
+    "unit": "kgCO₂/t",
+    "source": "MEE 2025"
+  }
+}
