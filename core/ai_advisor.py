@@ -11,10 +11,7 @@ from openai import OpenAI
 
 
 # ── ZhipuAI config ─────────────────────────────────────────────────
-ZHIPU_API_KEY = os.environ.get(
-    'ZHIPU_API_KEY',
-    '3481e6f4b8884103954f6d790865b5a1.KvVbtt5R5RBKP9R1'
-)
+ZHIPU_API_KEY = os.environ.get('ZHIPU_API_KEY', '')
 ZHIPU_BASE_URL = 'https://open.bigmodel.cn/api/paas/v4'
 AI_MODEL = 'glm-4-flash'
 

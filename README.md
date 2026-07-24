@@ -141,7 +141,7 @@ Python 3.12 · Pandas · Streamlit · Plotly · scikit-learn · 通义千问 API
 
 ## 👤 关于作者
 
-**刘志明** · 武汉文理学院
+**刘志明**
 
 - GitHub: [@liuzhiming12](https://github.com/liuzhiming12)
 - Email: liuzhiming_2005@qq.com
