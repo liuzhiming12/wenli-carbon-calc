@@ -2,6 +2,16 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 
+# pandas 3.0 compat: ensure float columns don't get inferred as int64
+pd.options.future.infer_string = False
+
+
+def _safe_float_df(df: pd.DataFrame) -> pd.DataFrame:
+    """Convert all numeric columns to float64 to prevent int64 overflow errors."""
+    for col in df.select_dtypes(include=['int', 'int64', 'Int64']).columns:
+        df[col] = df[col].astype(float)
+    return df
+
 def analyze_carbon_emissions(
     df: pd.DataFrame,
     analysis_type: str = "all",
@@ -333,7 +343,7 @@ def _analyze_time_trend(df: pd.DataFrame, granularity: str) -> pd.DataFrame:
     if len(trend_df) > 12:
         trend_df['同比变化(%)'] = trend_df['总碳排放(吨)'].pct_change(periods=12) * 100
 
-    return trend_df
+    return _safe_float_df(trend_df)
 
 def _analyze_departments(df: pd.DataFrame, department_col: str) -> pd.DataFrame:
     dept_df = df.groupby(department_col).agg({
@@ -351,7 +361,7 @@ def _analyze_departments(df: pd.DataFrame, department_col: str) -> pd.DataFrame:
 
     dept_df = dept_df.sort_values('总碳排放(吨)', ascending=False)
 
-    return dept_df
+    return _safe_float_df(dept_df)
 
 def _analyze_energy_types(df: pd.DataFrame) -> dict:
     total_electricity = df['电力碳排放(吨)'].sum()

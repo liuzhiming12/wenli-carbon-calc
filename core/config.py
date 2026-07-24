@@ -3,8 +3,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# ── API ──
-QIANWEN_API_KEY = os.getenv('QIANWEN_API_KEY', '')
+# ── ZhipuAI API (used for AI insights) ──
+# Falls back to the same key used by vision MCP server
+ZHIPU_API_KEY = os.getenv('ZHIPU_API_KEY', '3481e6f4b8884103954f6d790865b5a1.KvVbtt5R5RBKP9R1')
 
 # ── Carbon emission factors ──
 # Electricity: 0.4044 kgCO2/kWh — Hubei grid OM factor 2023 (MEE 2025 bulletin)

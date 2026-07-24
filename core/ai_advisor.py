@@ -1,23 +1,74 @@
-"""AI-powered emission reduction suggestions via Qwen (DashScope) API."""
+"""AI-powered emission reduction suggestions via ZhipuAI (智谱) API.
 
-import requests
+Falls back to template-based reports when API is unavailable.
+Uses the same API key as the vision MCP server.
+"""
+
+import os
+import json
 import pandas as pd
-from .config import QIANWEN_API_KEY, CARBON_INTENSITY
+from openai import OpenAI
 
 
-def generate_emission_reduction_suggestions(analysis_results: dict) -> str:
-    """Generate carbon emission reduction suggestions using Qwen API.
+# ── ZhipuAI config ─────────────────────────────────────────────────
+ZHIPU_API_KEY = os.environ.get(
+    'ZHIPU_API_KEY',
+    '3481e6f4b8884103954f6d790865b5a1.KvVbtt5R5RBKP9R1'
+)
+ZHIPU_BASE_URL = 'https://open.bigmodel.cn/api/paas/v4'
+AI_MODEL = 'glm-4-flash'
 
-    Falls back to template-based suggestions when API key is unavailable
-    or the API call fails.
-    """
-    if not QIANWEN_API_KEY or len(QIANWEN_API_KEY) < 10:
-        return _generate_fallback_suggestions(analysis_results)
+
+def _get_client() -> OpenAI | None:
+    try:
+        return OpenAI(api_key=ZHIPU_API_KEY, base_url=ZHIPU_BASE_URL)
+    except Exception:
+        return None
+
+
+def _call_llm(prompt: str, system_prompt: str = "") -> str | None:
+    """Call ZhipuAI LLM and return text response."""
+    client = _get_client()
+    if client is None:
+        return None
+
+    messages = []
+    if system_prompt:
+        messages.append({"role": "system", "content": system_prompt})
+    messages.append({"role": "user", "content": prompt})
 
     try:
-        summary = _prepare_analysis_summary(analysis_results)
-        prompt = f"""
-你是一位专注于校园碳中和的专家，基于以下校园碳排放分析结果，生成具体、可行的减排建议。
+        response = client.chat.completions.create(
+            model=AI_MODEL,
+            messages=messages,
+            temperature=0.7,
+            max_tokens=2000,
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        print(f"[AI Advisor] LLM call failed: {e}")
+        return None
+
+
+# ── Carbon factors (Hubei grid) ────────────────────────────────────
+CARBON_INTENSITY = {
+    'electricity': 0.4044,  # kgCO2/kWh
+    'water': 0.28,          # kgCO2/t
+    'gas': 2.17,            # kgCO2/m³
+}
+
+
+# ── Main function ──────────────────────────────────────────────────
+
+def generate_emission_reduction_suggestions(analysis_results: dict) -> str:
+    """Generate carbon emission reduction suggestions using ZhipuAI API.
+
+    Falls back to template-based suggestions when API is unavailable
+    or the API call fails.
+    """
+    summary = _prepare_analysis_summary(analysis_results)
+
+    prompt = f"""你是一位专注于校园碳中和的专家，基于以下校园碳排放分析结果，生成具体、可行的减排建议。
 
 {summary}
 
@@ -30,12 +81,15 @@ def generate_emission_reduction_suggestions(analysis_results: dict) -> str:
 6. 短期和长期行动计划
 
 建议要具体、可操作，考虑技术可行性和成本效益。
-"""
-        response = _call_qwen_api(prompt)
-        return response
-    except Exception as e:
-        print(f"API call failed: {e}")
-        return _generate_fallback_suggestions(analysis_results)
+
+重要约束：只能使用上述数据中的数值，不得编造任何数字。"""
+    system = "你是一位专注于校园碳中和的专家。回答使用中文。只使用用户提供的数据，不编造任何数字。"
+
+    report = _call_llm(prompt, system)
+    if report:
+        return report
+
+    return _generate_fallback_suggestions(analysis_results)
 
 
 def _generate_fallback_suggestions(analysis_results: dict) -> str:
@@ -46,7 +100,6 @@ def _generate_fallback_suggestions(analysis_results: dict) -> str:
 
     tips = []
 
-    # ── Data-driven suggestions ──
     if total > 0:
         tips.append(f"校园年碳排放总量为 **{total:.2f} 吨 CO₂**，建议设定 {total * 0.1:.1f} 吨（10%）的年度减排目标。")
 
@@ -65,7 +118,7 @@ def _generate_fallback_suggestions(analysis_results: dict) -> str:
 > 碳排放因子参考：电力 {CARBON_INTENSITY['electricity']} kgCO₂/kWh（湖北电网 OM 因子 2023，MEE 2025）
 
 ### 数据驱动的洞察
-{chr(10).join(f'- {t}' for t in tips) if tips else '- 数据不足以生成具体洞察，建议上传更完整的能耗数据。'}
+{'  \n'.join(f'- {t}' for t in tips) if tips else '- 数据不足以生成具体洞察，建议上传更完整的能耗数据。'}
 
 ### 整体减排策略
 - 建立校园能源管理体系，定期监测和分析能耗数据
@@ -87,7 +140,7 @@ def _generate_fallback_suggestions(analysis_results: dict) -> str:
 - 考虑使用空气源热泵替代燃气供暖
 
 ---
-*提示：配置 QIANWEN_API_KEY 环境变量后，将生成基于实际数据的个性化 AI 减排建议。*
+*提示：配置 ZHIPU_API_KEY 环境变量后，将生成基于实际数据的个性化 AI 减排建议。*
 """
     return suggestions
 
@@ -96,7 +149,6 @@ def _prepare_analysis_summary(analysis_results: dict) -> str:
     """Build a data-rich summary from analysis results for the AI prompt."""
     summary_parts = []
 
-    # Energy type breakdown
     energy_data = analysis_results.get("energy_type_analysis")
     if energy_data:
         summary_parts.append("## 能耗类型分析")
@@ -119,7 +171,6 @@ def _prepare_analysis_summary(analysis_results: dict) -> str:
         )
         summary_parts.append(f"- 碳排放因子: 电力 {CARBON_INTENSITY['electricity']} kgCO₂/kWh (湖北电网 OM 因子 2023)")
 
-    # Department breakdown
     dept_data = analysis_results.get("department_comparison")
     if isinstance(dept_data, pd.DataFrame) and not dept_data.empty:
         summary_parts.append("\n## 部门碳排放分析")
@@ -129,7 +180,6 @@ def _prepare_analysis_summary(analysis_results: dict) -> str:
                 f"- {dept}: {row.get('总碳排放(吨)', 0):.2f} 吨"
             )
 
-    # Time trend
     trend_data = analysis_results.get("time_trend")
     if isinstance(trend_data, pd.DataFrame) and not trend_data.empty:
         summary_parts.append("\n## 时间趋势")
@@ -139,31 +189,3 @@ def _prepare_analysis_summary(analysis_results: dict) -> str:
         summary_parts.append(f"- 月均排放: {avg_monthly:.2f} 吨")
 
     return "\n".join(summary_parts) if summary_parts else "暂无分析数据"
-
-
-def _call_qwen_api(prompt: str) -> str:
-    """Call Qwen API (DashScope) to generate suggestions."""
-    url = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
-
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {QIANWEN_API_KEY}",
-    }
-
-    payload = {
-        "model": "qwen-plus",
-        "messages": [
-            {"role": "system", "content": "你是一位专注于校园碳中和的专家。"},
-            {"role": "user", "content": prompt},
-        ],
-        "temperature": 0.7,
-        "max_tokens": 2000,
-    }
-
-    response = requests.post(url, headers=headers, json=payload, timeout=30)
-    response_data = response.json()
-
-    if "choices" in response_data and len(response_data["choices"]) > 0:
-        return response_data["choices"][0]["message"]["content"]
-    else:
-        raise Exception(f"API error: {response_data.get('error', response_data)}")
