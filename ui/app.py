@@ -80,7 +80,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.sidebar.title("🌍 文理碳计")
-st.sidebar.markdown("武汉文理学院校园碳足迹计算器")
+st.sidebar.markdown("校园碳足迹计算器")
 st.sidebar.divider()
 
 uploaded_file = st.sidebar.file_uploader(
@@ -95,7 +95,7 @@ time_granularity = st.sidebar.selectbox(
 )
 
 st.title("🌍 文理碳计 - 校园碳足迹计算器")
-st.markdown("## 武汉文理学院校园能耗与碳排放分析工具")
+st.markdown("## 校园能耗与碳排放分析工具")
 
 if uploaded_file is not None:
     try:
